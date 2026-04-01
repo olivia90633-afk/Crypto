@@ -1,2 +1,2 @@
-BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
-CHAT_ID = "YOUR_TELEGRAM_CHAT_ID"  # can be your user ID or a channel ID
+BOT_TOKEN = "8242593757:AAHoIOP1pcXwPPGto5KAHg3A_gVctmrGhAU"
+CHAT_ID = "7926402001"  # can be your user ID or a channel ID
