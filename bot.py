@@ -33,6 +33,6 @@ else:
     signal = "No signal right now."
 
 # Step 5: Send message to Telegram
-bot = Bot(token=8242593757:AAHoIOP1pcXwPPGto5KAHg3A_gVctmrGhAU)
+bot = Bot(token=BOT_TOKEN)
 bot.send_message(chat_id=CHAT_ID, text=signal)
 print("Signal sent:", signal)
