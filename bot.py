@@ -41,11 +41,12 @@ def calculate_rsi(prices, period=14):
     return 100 - (100 / (1 + rs))
 
 def analyze(symbol):
-    prices = get_prices(symbol)
+    prices = get_prices(symbols)
 
     ema10 = calculate_ema(prices, 10)
     ema50 = calculate_ema(prices, 50)
     rsi = calculate_rsi(prices)
+    return f"TEST SIGNAL {symbol}"
 
     if rsi < 35 and ema10 > ema50:
         return f"🔥 BUY SIGNAL\n{symbol}\nRSI: {round(rsi,2)}"
