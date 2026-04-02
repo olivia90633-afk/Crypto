@@ -3,7 +3,7 @@ import asyncio
 from telegram import Bot
 from config import BOT_TOKEN, CHAT_ID
 
-bot = Bot(8242593757:AAHoIOP1pcXwPPGto5KAHg3A_gVctmrGhAU)
+bot = Bot(token=8242593757:AAHoIOP1pcXwPPGto5KAHg3A_gVctmrGhAU)
 
 SYMBOLS = ["BTCUSDT", "ETHUSDT"]
 
