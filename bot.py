@@ -1,20 +1,23 @@
 import requests
 import asyncio
-from telegram import Bot
 import os
+from telegram import Bot
 
+# Load from Railway environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+CHAT_ID = int(os.getenv("CHAT_ID"))
 
 bot = Bot(token=BOT_TOKEN)
 
-SYMBOLS = ["BTCUSDT", "ETHUSDT"]
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "BNBUSDT"]
 
+# Get price data
 def get_prices(symbol):
     url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval=5m&limit=50"
     data = requests.get(url).json()
     return [float(candle[4]) for candle in data]
 
+# EMA calculation
 def calculate_ema(prices, period):
     ema = prices[0]
     k = 2 / (period + 1)
@@ -22,6 +25,7 @@ def calculate_ema(prices, period):
         ema = price * k + ema * (1 - k)
     return ema
 
+# RSI calculation
 def calculate_rsi(prices, period=14):
     gains, losses = [], []
     for i in range(1, len(prices)):
@@ -40,37 +44,58 @@ def calculate_rsi(prices, period=14):
     rs = avg_gain / avg_loss
     return 100 - (100 / (1 + rs))
 
+# Signal logic
 def analyze(symbol):
-    prices = get_prices(symbols)
+    prices = get_prices(symbol)
 
     ema10 = calculate_ema(prices, 10)
     ema50 = calculate_ema(prices, 50)
     rsi = calculate_rsi(prices)
-    return f"TEST SIGNAL {symbol}"
 
+    last_price = prices[-1]
+
+    # BUY condition
     if rsi < 35 and ema10 > ema50:
-        return f"🔥 BUY SIGNAL\n{symbol}\nRSI: {round(rsi,2)}"
+        return f"""🔥 BUY SIGNAL
+Pair: {symbol}
+Price: {last_price}
+RSI: {round(rsi,2)}
+Trend: Uptrend confirmed"""
 
+    # SELL condition
     elif rsi > 65 and ema10 < ema50:
-        return f"⚡ SELL SIGNAL\n{symbol}\nRSI: {round(rsi,2)}"
+        return f"""⚡ SELL SIGNAL
+Pair: {symbol}
+Price: {last_price}
+RSI: {round(rsi,2)}
+Trend: Downtrend confirmed"""
 
     return None
 
-async def send_signal(msg):
-    await bot.send_message(chat_id=CHAT_ID, text=msg)
+# Send message
+async def send_signal(message):
+    await bot.send_message(chat_id=CHAT_ID, text=message)
 
+# Main loop
 async def main():
+    # First test message (IMPORTANT)
+    await send_signal("✅ Bot started successfully!")
+
     while True:
         for symbol in SYMBOLS:
             try:
                 signal = analyze(symbol)
+
                 if signal:
                     await send_signal(signal)
-                    print(signal)
+                    print("Sent:", signal)
+                else:
+                    print(f"No signal for {symbol}")
+
             except Exception as e:
                 print("Error:", e)
 
-        await asyncio.sleep(300)
-async def main():
-    await send_signal("✅ Bot is working!")
+        await asyncio.sleep(300)  # 5 minutes
+
+# Run bot
 asyncio.run(main())
