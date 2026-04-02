@@ -70,5 +70,6 @@ async def main():
                 print("Error:", e)
 
         await asyncio.sleep(300)
-
+async def main():
+    await send_signal("✅ Bot is working!")
 asyncio.run(main())
